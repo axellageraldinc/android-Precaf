@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Detail_Pegawai"></activity>
+        <activity android:name=".PegawaiHomeActivity"></activity>
         <activity android:name=".LoginActivity"></activity>
     </application>
 
