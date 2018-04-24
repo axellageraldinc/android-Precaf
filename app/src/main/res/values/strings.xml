@@ -1,4 +1,9 @@
 <resources>
-  <string name="app_name">Presensi Cafe</string>
-  <string name="tambah">Tambah Pegawai Baru</string>
+    <string name="app_name">Presensi Cafe</string>
+    <string name="total_durasi_jaga">TOTAL DURASI JAGA</string>
+    <string name="waktu_durasi">4 jam 10 menit</string>
+    <string name="tanggal_mulai">Terhitung mulai 21 Februari 2018</string>
+    <string name="tombol_jaga">JAGA</string>
+    <string name="status">Klik tombol di atas\njika ingin mulai jaga</string>
+    <string name="tambah">Tambah Pegawai Baru</string>
 </resources>
