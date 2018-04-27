@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "530576891491",
+    "firebase_url": "https://precaf-8099d.firebaseio.com",
+    "project_id": "precaf-8099d",
+    "storage_bucket": "precaf-8099d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530576891491:android:a1ce80abb73bb2fc",
+        "android_client_info": {
+          "package_name": "papb.com.presensicafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530576891491-1m2de5i30o29b4ljn8gnpam7tov4ij54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuWoNpOIBrfyp97KKbvU4KpVv_zgg6hck"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
