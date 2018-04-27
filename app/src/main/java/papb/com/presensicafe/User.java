@@ -4,7 +4,7 @@ public class User {
     private String id;
     private String fullName;
     private String email;
-    private String jamJaga;
+    private long jamJaga;
     private String role;
     private String status;
 }
