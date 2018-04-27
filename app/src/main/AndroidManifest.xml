@@ -19,7 +19,8 @@
         <activity android:name=".DetailPegawaiActivity" />
         <activity android:name=".PegawaiHomeActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".SplashScreenActivity"></activity>
+        <activity android:name=".SplashScreenActivity" />
+        <activity android:name=".ListPegawaiActivity"></activity>
     </application>
 
 </manifest>
