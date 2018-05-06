@@ -1,5 +1,6 @@
 package papb.com.presensicafe;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -27,10 +28,17 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private EditText txtEmail, txtPassword;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Harap tunggu...");
+        progressDialog.setIndeterminate(true);
 
         btnLogin = findViewById(R.id.btnLogin);
         txtEmail = findViewById(R.id.txtEmail);
@@ -50,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password){
+        progressDialog.show();
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
                 new OnCompleteListener<AuthResult>() {
                     @Override
@@ -61,14 +70,15 @@ public class LoginActivity extends AppCompatActivity {
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             String role = dataSnapshot.getValue(String.class);
                                             if(role.equals("admin")){
-                                                Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);;
+                                                Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                 startActivity(intent);
                                                 finish();
                                             }else{
-                                                Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);;
+                                                Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                 startActivity(intent);
                                                 finish();
                                             }
+                                            progressDialog.dismiss();
                                         }
 
                                         @Override
@@ -79,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                                     ));
                         }else{
                             Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                         }
                     }
                 }

@@ -27,17 +27,14 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginStart="5dp"
-            android:text="Nama Lengkap" />
+            android:text="Nama Lengkap"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/tambahNama"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/white_edit_text_rounded_border_with_shadow"
             android:ems="10"
             android:hint="Nama"
@@ -48,17 +45,15 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginStart="5dp"
-            android:text="Email" />
+            android:layout_marginTop="8dp"
+            android:text="Email"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/tambahEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/white_edit_text_rounded_border_with_shadow"
             android:ems="10"
             android:hint="Email"
@@ -69,17 +64,15 @@
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginStart="5dp"
-            android:text="Password" />
+            android:layout_marginTop="8dp"
+            android:text="Password"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/tambahPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/white_edit_text_rounded_border_with_shadow"
             android:ems="10"
             android:hint="Password"
@@ -90,10 +83,11 @@
             android:id="@+id/buttonTambah"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/button_color_primary"
             android:text="Tambahkan Pegawai"
             android:textColor="@color/background"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </LinearLayout>

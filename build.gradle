@@ -17,7 +17,6 @@ buildscript {
 }
 
 allprojects {
-    buildDir = "C:/tmp/${rootProject.name}/${project.name}"
     repositories {
         google()
         jcenter()

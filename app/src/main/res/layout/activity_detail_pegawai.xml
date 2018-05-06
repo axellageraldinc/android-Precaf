@@ -5,18 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="papb.com.presensicafe.DetailPegawaiActivity"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     >
 
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
+        android:id="@+id/txtNamaPegawaiDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60px"
         android:layout_marginLeft="50px"
+        android:layout_marginTop="60px"
+        android:text="Franklin\nMatthews"
         android:textColor="#000000"
-        android:textStyle="bold"
         android:textSize="15pt"
-        android:text="Franklin\nMatthews"/>
+        android:textStyle="bold" />
 
     <!--Text Detail-->
     <TextView
@@ -30,7 +37,6 @@
 
     <!--Cardview Detail-->
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_detail"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_gravity="center"
@@ -51,37 +57,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
+                android:layout_marginLeft="10pt"
                 android:layout_weight="0.5"
-                android:weightSum="3"
-                android:layout_marginLeft="10pt">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Terdaftar sejak :"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:gravity="center_vertical"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Durasi jaga bulan ini :"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Total durasi jaga :"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_weight="0.5"
                 android:weightSum="3">
 
                 <TextView
@@ -89,22 +67,57 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textStyle="bold"
-                    android:text="27 Februari 2017"/>
+                    android:text="Terdaftar sejak :" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textStyle="bold"
-                    android:text="2 jam 17 menit"/>
+                    android:text="Durasi jaga bulan ini :" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textStyle="bold"
-                    android:text="89 jam 12 menit"/>
+                    android:text="Total durasi jaga :" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/txtTerdaftarSejak"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="27 Februari 2017"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtDurasiJagaBulanIni"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="2 jam 17 menit"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTotalDurasiJaga"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="89 jam 12 menit"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -124,7 +137,6 @@
 
     <!--Cardview Nonaktifkan-->
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_detail2"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_gravity="center"
@@ -141,22 +153,22 @@
             android:orientation="vertical">
 
             <Button
-                android:layout_gravity="center"
-                android:background="@drawable/button_color_primary_round_default"
-                android:id="@+id/buttonNonaktifkan"
-                android:layout_marginTop="10dp"
+                android:id="@+id/btnNonaktifkanPegawai"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_color_primary_round_default"
                 android:text="NONAKTIF"
                 android:textColor="@android:color/white"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="Klik tombol di atas\nuntuk menonaktifkan pegawai"
-                android:textColor="@android:color/black"
-                android:gravity="center"/>
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
 

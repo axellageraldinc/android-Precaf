@@ -1,5 +1,9 @@
 package papb.com.presensicafe;
 
+import org.joda.time.DateTime;
+
+import java.util.Date;
+
 public class User {
     private String id;
     private String fullName;
@@ -7,6 +11,7 @@ public class User {
     private long jamJaga;
     private String role;
     private String status;
+    private String tanggalRegistrasi;
 
     public String getId() {
         return id;
@@ -54,5 +59,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTanggalRegistrasi() {
+        return tanggalRegistrasi;
+    }
+
+    public void setTanggalRegistrasi(String tanggalRegistrasi) {
+        this.tanggalRegistrasi = tanggalRegistrasi;
     }
 }

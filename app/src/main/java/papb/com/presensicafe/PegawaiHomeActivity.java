@@ -1,10 +1,23 @@
 package papb.com.presensicafe;
 
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,56 +26,147 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class PegawaiHomeActivity extends AppCompatActivity {
 
-    private FirebaseAuth fIrebaseAuth;
+    private static final int MY_PERMISSION_LOCATION = 0;
+    private static final String TAG = PegawaiHomeActivity.class.getSimpleName();
+    private static final double LATITUDE_CAFE_TETI = -7.766878;
+    private static final double LONGITUDE_CAFE_TETI = 110.376819;
+    private static final double TOLERANSI_JARAK_DALAM_KILOMETER = 0.1;
+
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
 
+    private GoogleApiClient googleApiClient;
+
+    private TextView txtTotalDurasiJaga, txtTerhitungMulaiDari;
     private Button btnJaga;
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pegawai_home);
 
-        fIrebaseAuth=FirebaseAuth.getInstance();
-        databaseReference= FirebaseDatabase.getInstance().getReference();
+        connectGoogleApiClient();
 
-        btnJaga=findViewById(R.id.buttonjaga);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        btnJaga = findViewById(R.id.buttonjaga);
         btnJaga.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(btnJaga.getText().toString().equals("JAGA")){
-                    btnJaga.setText("SELESAI JAGA");
+                if (btnJaga.getText().toString().equals("JAGA")) {
                     catatWaktuMulai();
-                }else{
+                } else {
                     btnJaga.setText("JAGA");
                     catatWaktuSelesai();
-                    final long durasiJagaDalamMillisecond = TimeKeeper.timeStop-TimeKeeper.timeStart;
-                    databaseReference.child("users").child(fIrebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            long jamJaga = dataSnapshot.getValue(Long.class);
-                            long jamJagaBaru = jamJaga+durasiJagaDalamMillisecond;
-                            databaseReference.child("users").child(fIrebaseAuth.getCurrentUser().getUid()).child("jamJaga").setValue(jamJagaBaru);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
                 }
+            }
+        });
+
+        txtTotalDurasiJaga = findViewById(R.id.txtTotalDurasiJaga);
+        getTotalDurasiJaga();
+        txtTerhitungMulaiDari = findViewById(R.id.txtTerhitungMulaiDari);
+        getTerhitungMulaiDari();
+    }
+
+    private void getTotalDurasiJaga(){
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long jamJaga = dataSnapshot.getValue(Long.class);
+                txtTotalDurasiJaga.setText(String.format("%02d jam %02d menit %02d detik",
+                        TimeUnit.MILLISECONDS.toHours(jamJaga),
+                        TimeUnit.MILLISECONDS.toMinutes(jamJaga),
+                        TimeUnit.MILLISECONDS.toSeconds(jamJaga) -
+                                TimeUnit.MINUTES.toHours(TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MILLISECONDS.toSeconds(jamJaga)))
+                ));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
 
-    private void catatWaktuMulai(){
-        TimeKeeper.timeStart=new Date().getTime();
+    private void getTerhitungMulaiDari(){
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("tanggalRegistrasi").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String tanggalRegistrasi = dataSnapshot.getValue(String.class);
+                txtTerhitungMulaiDari.setText("Terhitung mulai dari " + tanggalRegistrasi);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
+
+    private void connectGoogleApiClient(){
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Awareness.API)
+                .build();
+        googleApiClient.connect();
+    }
+
+    private void catatWaktuMulai(){if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(
+                PegawaiHomeActivity.this,
+                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                MY_PERMISSION_LOCATION
+        );
+    }
+        Awareness.SnapshotApi.getLocation(googleApiClient)
+                .setResultCallback(new ResultCallback<LocationResult>() {
+                    @Override
+                    public void onResult(@NonNull LocationResult locationResult) {
+                        if (!locationResult.getStatus().isSuccess()) {
+                            Log.e(TAG, "Could not get location.");
+                            return;
+                        }
+                        Location location = locationResult.getLocation();
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        Log.i(TAG, "Lat: " + latitude + ", Lng: " + longitude);
+                        double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, LATITUDE_CAFE_TETI, LONGITUDE_CAFE_TETI);
+                        Log.i(TAG, "distance to teti cafe : " + distanceToTetiCafe*1000 + " meter");
+                        if(distanceToTetiCafe < TOLERANSI_JARAK_DALAM_KILOMETER){
+                            TimeKeeper.timeStart=new Date().getTime();
+                            btnJaga.setText("SELESAI JAGA");
+                        } else{
+                            Toast.makeText(PegawaiHomeActivity.this, "Anda sedang tidak di TETI Cafe!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
     private void catatWaktuSelesai(){
         TimeKeeper.timeStop=new Date().getTime();
+        final long durasiJagaDalamMillisecond = TimeKeeper.timeStop - TimeKeeper.timeStart;
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long jamJaga = dataSnapshot.getValue(Long.class);
+                long jamJagaBaru = jamJaga + durasiJagaDalamMillisecond;
+                databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").setValue(jamJagaBaru);
+                getTotalDurasiJaga();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
