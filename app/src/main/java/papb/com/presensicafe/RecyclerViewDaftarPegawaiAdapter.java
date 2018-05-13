@@ -1,6 +1,7 @@
 package papb.com.presensicafe;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,11 +39,18 @@ public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<Recyc
         return pegawaiList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView txtNamaDaftarPegawai;
         public ViewHolder(View itemView) {
             super(itemView);
             txtNamaDaftarPegawai = itemView.findViewById(R.id.txtNamaDaftarPegawai);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent pegawaiDetailActivity = new Intent(context, DetailPegawaiActivity.class);
+                    context.startActivity(pegawaiDetailActivity);
+                }
+            });
         }
     }
 
