@@ -12,6 +12,8 @@ public class User {
     private String role;
     private String status;
     private String tanggalRegistrasi;
+    private long jamJagaBulanIni;
+    private int bulanJagaTerakhir;
 
     public String getId() {
         return id;
@@ -67,5 +69,21 @@ public class User {
 
     public void setTanggalRegistrasi(String tanggalRegistrasi) {
         this.tanggalRegistrasi = tanggalRegistrasi;
+    }
+
+    public long getJamJagaBulanIni() {
+        return jamJagaBulanIni;
+    }
+
+    public void setJamJagaBulanIni(long jamJagaBulanIni) {
+        this.jamJagaBulanIni = jamJagaBulanIni;
+    }
+
+    public int getBulanJagaTerakhir() {
+        return bulanJagaTerakhir;
+    }
+
+    public void setBulanJagaTerakhir(int bulanJagaTerakhir) {
+        this.bulanJagaTerakhir = bulanJagaTerakhir;
     }
 }

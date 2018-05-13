@@ -27,7 +27,6 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
     private Toolbar toolbar;
 
     private DatabaseReference databaseReference;
-    private FirebaseAuth firebaseAuth;
 
     private TextView txtNamePalingBanyak, txtNamePalingSedikit;
     private CardView btnManajemenPegawai;
@@ -82,8 +81,8 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
     }
     private void getPegawaiPalingBanyakDurasiJamJaga(){
         DatabaseReference databasePegawai = databaseReference.child("users");
-        Query findDurasiJamJagaPalingBanyak = databasePegawai.orderByChild("jamJaga").limitToLast(1);
-        findDurasiJamJagaPalingBanyak.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query findDurasiJamJagaPalingBanyak = databasePegawai.orderByChild("jamJagaBulanIni").limitToLast(1);
+        findDurasiJamJagaPalingBanyak.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data: dataSnapshot.getChildren()) {
@@ -101,8 +100,8 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
 
     private void getPegawaiPalingSedikitDurasiJamJaga(){
         DatabaseReference databasePegawai = databaseReference.child("users");
-        Query findDurasiJamJagaPalingBanyak = databasePegawai.orderByChild("jamJaga").limitToFirst(1);
-        findDurasiJamJagaPalingBanyak.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query findDurasiJamJagaPalingSedikit = databasePegawai.orderByChild("jamJagaBulanIni").limitToFirst(1);
+        findDurasiJamJagaPalingSedikit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data: dataSnapshot.getChildren()) {
