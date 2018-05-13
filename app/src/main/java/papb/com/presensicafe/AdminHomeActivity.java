@@ -1,8 +1,14 @@
 package papb.com.presensicafe;
 
+import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class AdminHomeActivity extends AppCompatActivity {
+public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
 
@@ -22,6 +28,7 @@ public class AdminHomeActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     private TextView txtNamePalingBanyak, txtNamePalingSedikit;
+    private CardView btnManajemenPegawai;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +45,18 @@ public class AdminHomeActivity extends AppCompatActivity {
         getPegawaiPalingBanyakDurasiJamJaga();
         txtNamePalingSedikit = findViewById(R.id.txtNamePalingSedikit);
         getPegawaiPalingSedikitDurasiJamJaga();
-    }
 
+        btnManajemenPegawai=(CardView) findViewById(R.id.cardViewManajemenPegawai);
+        btnManajemenPegawai.setOnClickListener(this);
+    }
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.cardViewManajemenPegawai:
+                Intent manajemenPegawaiIntent=new Intent(AdminHomeActivity.this, ListPegawaiActivity.class);
+                startActivity(manajemenPegawaiIntent);
+                break;
+        }
+    }
     private void getPegawaiPalingBanyakDurasiJamJaga(){
         DatabaseReference databasePegawai = databaseReference.child("users");
         Query findDurasiJamJagaPalingBanyak = databasePegawai.orderByChild("jamJaga").limitToLast(1);
