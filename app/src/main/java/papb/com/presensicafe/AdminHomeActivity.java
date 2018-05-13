@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
@@ -29,6 +31,9 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
 
     private TextView txtNamePalingBanyak, txtNamePalingSedikit;
     private CardView btnManajemenPegawai;
+    private Button btnJaga;
+    private TextView txtStatusJaga;
+    private boolean statusJaga = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,24 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
 
         btnManajemenPegawai=(CardView) findViewById(R.id.cardViewManajemenPegawai);
         btnManajemenPegawai.setOnClickListener(this);
+
+        txtStatusJaga=(TextView)findViewById(R.id.textView4);
+        btnJaga=(Button)findViewById(R.id.btnAdminJaga);
+        btnJaga.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!statusJaga){
+                    btnJaga.setText("BERHENTI\nJAGA");
+                    txtStatusJaga.setText("Klik tombol di atas\njika berhenti jaga");
+                    statusJaga=true;
+                } else{
+                    btnJaga.setText("JAGA");
+                    txtStatusJaga.setText("Klik tombol di atas\n jika mulai jaga");
+                    statusJaga=false;
+                }
+
+            }
+        });
     }
     public void onClick(View v){
         switch (v.getId()){
