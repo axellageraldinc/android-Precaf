@@ -1,6 +1,7 @@
 package papb.com.presensicafe;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +36,7 @@ import java.util.List;
 
 public class ListPegawaiActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth, firebaseAuth2;
     private DatabaseReference databaseReference;
 
     private FloatingActionButton btnAddPegawai;
@@ -43,10 +47,17 @@ public class ListPegawaiActivity extends AppCompatActivity {
     private RecyclerView recyclerViewDaftarPegawai;
     private RecyclerViewDaftarPegawaiAdapter recyclerViewDaftarPegawaiAdapter;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_pegawai);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please wait...");
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,6 +66,16 @@ public class ListPegawaiActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseOptions firebaseOptions = new FirebaseOptions.Builder()
+                .setDatabaseUrl("https://precaf-8099d.firebaseio.com")
+                .setApiKey("AIzaSyBOr9ydz9nG9aPwBeX0z-1ewDLVZRlALpo")
+                .setApplicationId("precaf-8099d").build();
+        try {
+            FirebaseApp myApp = FirebaseApp.initializeApp(getApplicationContext(), firebaseOptions, "Precaf");
+            firebaseAuth2 = FirebaseAuth.getInstance(myApp);
+        } catch (IllegalStateException e){
+            firebaseAuth2 = FirebaseAuth.getInstance(FirebaseApp.getInstance("Precaf"));
+        }
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -89,8 +110,9 @@ public class ListPegawaiActivity extends AppCompatActivity {
     }
 
     private void registerPegawaiBaru(final String email, String password, final String fullName){
+        progressDialog.show();
         final DateTime today = new DateTime();
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        firebaseAuth2.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
@@ -105,9 +127,11 @@ public class ListPegawaiActivity extends AppCompatActivity {
                     databaseReference.child("users").child(task.getResult().getUser().getUid()).setValue(user);
                     txtEmail.setText("");
                     txtPassword.setText("");
-                    getPegawaiListFromFirebaseDatabase();
+                    firebaseAuth2.signOut();
+                    progressDialog.dismiss();
                 } else{
                     Toast.makeText(ListPegawaiActivity.this, "Register failed", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
         });
@@ -115,7 +139,7 @@ public class ListPegawaiActivity extends AppCompatActivity {
 
     private void getPegawaiListFromFirebaseDatabase(){
         final List<User> pegawaiList = new ArrayList<>();
-        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 pegawaiList.clear();
@@ -126,8 +150,7 @@ public class ListPegawaiActivity extends AppCompatActivity {
                         pegawaiList.add(user);
                     }
                 }
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-                recyclerViewDaftarPegawai.setLayoutManager(linearLayoutManager);
+                recyclerViewDaftarPegawai.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 recyclerViewDaftarPegawaiAdapter = new RecyclerViewDaftarPegawaiAdapter(pegawaiList, getApplicationContext());
                 recyclerViewDaftarPegawai.setAdapter(recyclerViewDaftarPegawaiAdapter);
                 recyclerViewDaftarPegawaiAdapter.notifyDataSetChanged();

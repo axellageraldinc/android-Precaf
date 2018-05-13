@@ -11,6 +11,8 @@
     <string name="paling_banyak">Paling Banyak</string>
     <string name="manajemen_pegawai">Manajemen Pegawai</string>
 
+    <string name="shared_pref_helper">sharedPrefHelper</string>
+
     <string name="fence_location_key">locationFenceKey</string>
 
     <string name="google_play_services_key">AIzaSyAuvyYEK-wxRrOg8UTgGpx9kaxmYi-x1bg</string>
