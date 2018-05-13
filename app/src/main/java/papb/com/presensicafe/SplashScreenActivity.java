@@ -47,11 +47,11 @@ public class SplashScreenActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             String role = dataSnapshot.getValue(String.class);
                             if(role.equals("admin")){
-                                Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
                             }else{
-                                Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);;
+                                Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
                             }
