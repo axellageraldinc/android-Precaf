@@ -31,6 +31,7 @@ public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<Recyc
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.txtPegawaiId.setText(pegawaiList.get(position).getId());
         holder.txtNamaDaftarPegawai.setText(pegawaiList.get(position).getFullName());
     }
 
@@ -41,8 +42,10 @@ public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<Recyc
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView txtNamaDaftarPegawai;
+        private TextView txtPegawaiId;
         public ViewHolder(View itemView) {
             super(itemView);
+            txtPegawaiId = itemView.findViewById(R.id.txtPegawaiId);
             txtNamaDaftarPegawai = itemView.findViewById(R.id.txtNamaDaftarPegawai);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
