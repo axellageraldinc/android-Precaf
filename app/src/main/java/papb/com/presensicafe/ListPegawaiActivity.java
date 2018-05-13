@@ -122,6 +122,8 @@ public class ListPegawaiActivity extends AppCompatActivity {
                     user.setEmail(email);
                     user.setRole("pegawai");
                     user.setJamJaga(0);
+                    user.setJamJagaBulanIni(0);
+                    user.setBulanJagaTerakhir(today.getMonthOfYear());
                     user.setStatus("aktif");
                     user.setTanggalRegistrasi(today.getDayOfMonth() + "-" + today.getMonthOfYear() + "-" + today.getYear());
                     databaseReference.child("users").child(task.getResult().getUser().getUid()).setValue(user);

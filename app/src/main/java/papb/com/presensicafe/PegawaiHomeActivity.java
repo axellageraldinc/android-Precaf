@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +34,8 @@ public class PegawaiHomeActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSION_LOCATION = 0;
     private static final String TAG = PegawaiHomeActivity.class.getSimpleName();
-    private static final double LATITUDE_CAFE_TETI = -7.766878;
-    private static final double LONGITUDE_CAFE_TETI = 110.376819;
+    private static final double LATITUDE_CAFE_TETI = -7.777225;
+    private static final double LONGITUDE_CAFE_TETI = 110.374298;
     private static final double TOLERANSI_JARAK_DALAM_KILOMETER = 0.1;
 
     private FirebaseAuth firebaseAuth;
@@ -44,6 +46,8 @@ public class PegawaiHomeActivity extends AppCompatActivity {
     private TextView txtTotalDurasiJaga, txtTerhitungMulaiDari;
     private Button btnJaga;
     private Toolbar toolbar;
+
+    private DateTime today = new DateTime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,9 +142,9 @@ public class PegawaiHomeActivity extends AppCompatActivity {
                         Location location = locationResult.getLocation();
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
-                        Log.i(TAG, "Lat: " + latitude + ", Lng: " + longitude);
+                        Log.i(TAG, latitude + "," + longitude);
                         double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, LATITUDE_CAFE_TETI, LONGITUDE_CAFE_TETI);
-                        Log.i(TAG, "distance to teti cafe : " + distanceToTetiCafe*1000 + " meter");
+                        Log.i(TAG, "Jarak ke cafe teti : " + distanceToTetiCafe*1000 + " meter");
                         if(distanceToTetiCafe < TOLERANSI_JARAK_DALAM_KILOMETER){
                             TimeKeeper.timeStart=new Date().getTime();
                             btnJaga.setText("SELESAI JAGA");
@@ -154,12 +158,18 @@ public class PegawaiHomeActivity extends AppCompatActivity {
     private void catatWaktuSelesai(){
         TimeKeeper.timeStop=new Date().getTime();
         final long durasiJagaDalamMillisecond = TimeKeeper.timeStop - TimeKeeper.timeStart;
-        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long jamJaga = dataSnapshot.getValue(Long.class);
+                User user = dataSnapshot.getValue(User.class);
+                long jamJaga = user.getJamJaga();
                 long jamJagaBaru = jamJaga + durasiJagaDalamMillisecond;
                 databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").setValue(jamJagaBaru);
+                databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJagaBulanIni").setValue(jamJagaBaru);
+                if(today.getMonthOfYear()>user.getBulanJagaTerakhir()){
+                    databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("bulanJagaTerakhir").setValue(today.getMonthOfYear());
+                    databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJagaBulanIni").setValue(durasiJagaDalamMillisecond);
+                }
                 getTotalDurasiJaga();
             }
 
