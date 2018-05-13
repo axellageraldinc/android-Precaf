@@ -49,6 +49,9 @@ public class PegawaiHomeActivity extends AppCompatActivity {
 
     private DateTime today = new DateTime();
 
+    private double latitudeCafeTeti=0;
+    private double longitudeCafeTeti=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +65,9 @@ public class PegawaiHomeActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        getLatitudeCafeTeti();
+        getLongitudeCafeTeti();
 
         btnJaga = findViewById(R.id.buttonjaga);
         btnJaga.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +86,33 @@ public class PegawaiHomeActivity extends AppCompatActivity {
         getTotalDurasiJaga();
         txtTerhitungMulaiDari = findViewById(R.id.txtTerhitungMulaiDari);
         getTerhitungMulaiDari();
+    }
+
+    private void getLatitudeCafeTeti(){
+        databaseReference.child("latitudeCafeTeti").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                latitudeCafeTeti = dataSnapshot.getValue(double.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getLongitudeCafeTeti(){
+        databaseReference.child("longitudeCafeTeti").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                longitudeCafeTeti = dataSnapshot.getValue(double.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void getTotalDurasiJaga(){
@@ -143,7 +176,7 @@ public class PegawaiHomeActivity extends AppCompatActivity {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         Log.i(TAG, latitude + "," + longitude);
-                        double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, LATITUDE_CAFE_TETI, LONGITUDE_CAFE_TETI);
+                        double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, latitudeCafeTeti, longitudeCafeTeti);
                         Log.i(TAG, "Jarak ke cafe teti : " + distanceToTetiCafe*1000 + " meter");
                         if(distanceToTetiCafe < TOLERANSI_JARAK_DALAM_KILOMETER){
                             TimeKeeper.timeStart=new Date().getTime();
