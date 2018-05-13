@@ -50,9 +50,11 @@ public class DetailPegawaiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (btnNonaktifkanPegawai.getText().toString().equals("NONAKTIF")){
+                    nonAktifkanPegawai();
                     btnNonaktifkanPegawai.setText("AKTIF");
                     txtKeterangan.setText("Klik tombol di atas\nuntuk mengaktifkan pegawai");
                 } else {
+                    aktifkanPegawai();
                     btnNonaktifkanPegawai.setText("NONAKTIF");
                     txtKeterangan.setText("Klik tombol di atas\nuntuk menonaktifkan pegawai");
                 }
@@ -70,6 +72,14 @@ public class DetailPegawaiActivity extends AppCompatActivity {
     private String getPegawaiIdFromIntent(){
         Intent intent = getIntent();
         return intent.getStringExtra("pegawaiId");
+    }
+
+    private void nonAktifkanPegawai(){
+        databaseReference.child("users").child(pegawaiId).child("status").setValue("nonaktif");
+    }
+
+    private void aktifkanPegawai(){
+        databaseReference.child("users").child(pegawaiId).child("status").setValue("aktif");
     }
 
     private void setDetailPegawaiContent(){
