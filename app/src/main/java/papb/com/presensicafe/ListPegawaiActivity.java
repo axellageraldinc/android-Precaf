@@ -105,6 +105,7 @@ public class ListPegawaiActivity extends AppCompatActivity {
                     databaseReference.child("users").child(task.getResult().getUser().getUid()).setValue(user);
                     txtEmail.setText("");
                     txtPassword.setText("");
+                    getPegawaiListFromFirebaseDatabase();
                 } else{
                     Toast.makeText(ListPegawaiActivity.this, "Register failed", Toast.LENGTH_SHORT).show();
                 }
@@ -114,7 +115,7 @@ public class ListPegawaiActivity extends AppCompatActivity {
 
     private void getPegawaiListFromFirebaseDatabase(){
         final List<User> pegawaiList = new ArrayList<>();
-        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 pegawaiList.clear();
@@ -125,11 +126,11 @@ public class ListPegawaiActivity extends AppCompatActivity {
                         pegawaiList.add(user);
                     }
                 }
-                recyclerViewDaftarPegawai.setAdapter(recyclerViewDaftarPegawaiAdapter);
-                recyclerViewDaftarPegawaiAdapter.notifyDataSetChanged();
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                 recyclerViewDaftarPegawai.setLayoutManager(linearLayoutManager);
                 recyclerViewDaftarPegawaiAdapter = new RecyclerViewDaftarPegawaiAdapter(pegawaiList, getApplicationContext());
+                recyclerViewDaftarPegawai.setAdapter(recyclerViewDaftarPegawaiAdapter);
+                recyclerViewDaftarPegawaiAdapter.notifyDataSetChanged();
             }
 
             @Override
