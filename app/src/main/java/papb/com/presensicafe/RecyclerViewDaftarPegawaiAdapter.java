@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<RecyclerViewDaftarPegawaiAdapter.ViewHolder> {
 
@@ -31,8 +32,14 @@ public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<Recyc
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.txtPegawaiId.setText(pegawaiList.get(position).getId());
-        holder.txtNamaDaftarPegawai.setText(pegawaiList.get(position).getFullName());
+        User user = pegawaiList.get(position);
+        holder.txtPegawaiId.setText(user.getId());
+        holder.txtNamaDaftarPegawai.setText(user.getFullName());
+        holder.txtJamJaga.setText("Durasi bulan ini : " + String.format("%02d jam %02d menit %02d detik",
+                TimeUnit.MILLISECONDS.toHours(user.getJamJagaBulanIni()),
+                TimeUnit.MILLISECONDS.toMinutes(user.getJamJagaBulanIni()),
+                TimeUnit.MILLISECONDS.toSeconds(user.getJamJagaBulanIni()) -
+                        TimeUnit.MINUTES.toHours(TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MILLISECONDS.toSeconds(user.getJamJagaBulanIni())))));
     }
 
     @Override
@@ -43,14 +50,17 @@ public class RecyclerViewDaftarPegawaiAdapter extends RecyclerView.Adapter<Recyc
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView txtNamaDaftarPegawai;
         private TextView txtPegawaiId;
+        private TextView txtJamJaga;
         public ViewHolder(View itemView) {
             super(itemView);
             txtPegawaiId = itemView.findViewById(R.id.txtPegawaiId);
             txtNamaDaftarPegawai = itemView.findViewById(R.id.txtNamaDaftarPegawai);
+            txtJamJaga = itemView.findViewById(R.id.txtJamJaga);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent pegawaiDetailActivity = new Intent(context, DetailPegawaiActivity.class);
+                    pegawaiDetailActivity.putExtra("pegawaiId", txtPegawaiId.getText().toString());
                     context.startActivity(pegawaiDetailActivity);
                 }
             });

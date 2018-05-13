@@ -6,7 +6,7 @@
     <string name="tombol_jaga">JAGA</string>
     <string name="status">Klik tombol di atas\njika ingin mulai jaga</string>
     <string name="tambah">Tambah Pegawai Baru</string>
-    <string name="summary_durasi_jaga">Summary Durasi Jaga</string>
+    <string name="summary_durasi_jaga">Summary Durasi Jaga Bulan Ini</string>
     <string name="paling_sedikit">Paling Sedikit</string>
     <string name="paling_banyak">Paling Banyak</string>
     <string name="manajemen_pegawai">Manajemen Pegawai</string>

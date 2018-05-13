@@ -64,19 +64,24 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("role").addListenerForSingleValueEvent((
+                            databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent((
                                     new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
-                                            String role = dataSnapshot.getValue(String.class);
-                                            if(role.equals("admin")){
-                                                Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
-                                            }else{
-                                                Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
+                                            User user = dataSnapshot.getValue(User.class);
+                                            if(user.getStatus().equals("aktif")) {
+                                                String role = user.getRole();
+                                                if (role.equals("admin")) {
+                                                    Intent intent = new Intent(getApplicationContext(), AdminHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Intent intent = new Intent(getApplicationContext(), PegawaiHomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            } else{
+                                                Toast.makeText(LoginActivity.this, "Maaf anda sudah tidak terdaftar lagi sebagai pegawai Cafe TETI", Toast.LENGTH_SHORT).show();
                                             }
                                             progressDialog.dismiss();
                                         }
