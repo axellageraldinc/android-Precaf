@@ -1,5 +1,6 @@
 package papb.com.presensicafe;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -9,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,8 +38,6 @@ public class PegawaiHomeActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSION_LOCATION = 0;
     private static final String TAG = PegawaiHomeActivity.class.getSimpleName();
-    private static final double LATITUDE_CAFE_TETI = -7.777225;
-    private static final double LONGITUDE_CAFE_TETI = 110.374298;
     private static final double TOLERANSI_JARAK_DALAM_KILOMETER = 0.1;
 
     private FirebaseAuth firebaseAuth;
@@ -88,6 +90,31 @@ public class PegawaiHomeActivity extends AppCompatActivity {
         getTerhitungMulaiDari();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(firebaseAuth.getCurrentUser()==null){
+            Intent loginActivity = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(loginActivity);
+            finish();
+        }
+    }
+
+    private void getTerhitungMulaiDari(){
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("tanggalRegistrasi").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String tanggalRegistrasi = dataSnapshot.getValue(String.class);
+                txtTerhitungMulaiDari.setText("Terhitung mulai dari " + tanggalRegistrasi);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getLatitudeCafeTeti(){
         databaseReference.child("latitudeCafeTeti").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -135,21 +162,6 @@ public class PegawaiHomeActivity extends AppCompatActivity {
         });
     }
 
-    private void getTerhitungMulaiDari(){
-        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("tanggalRegistrasi").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String tanggalRegistrasi = dataSnapshot.getValue(String.class);
-                txtTerhitungMulaiDari.setText("Terhitung mulai dari " + tanggalRegistrasi);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private void connectGoogleApiClient(){
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Awareness.API)
@@ -187,7 +199,6 @@ public class PegawaiHomeActivity extends AppCompatActivity {
                     }
                 });
     }
-
     private void catatWaktuSelesai(){
         TimeKeeper.timeStop=new Date().getTime();
         final long durasiJagaDalamMillisecond = TimeKeeper.timeStop - TimeKeeper.timeStart;
@@ -211,5 +222,27 @@ public class PegawaiHomeActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                firebaseAuth.signOut();
+                Intent loginActivity = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(loginActivity);
+                finish();
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }

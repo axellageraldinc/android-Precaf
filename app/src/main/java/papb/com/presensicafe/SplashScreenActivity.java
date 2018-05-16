@@ -20,10 +20,11 @@ public class SplashScreenActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authStateListener;
     private DatabaseReference databaseReference;
 
+    String userId;
+
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
@@ -35,6 +36,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
+        userId = firebaseAuth.getUid();
+
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -42,7 +45,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
             } else{
-                    databaseReference.child("users").child(firebaseAuth.getUid()).child("role").addListenerForSingleValueEvent(new ValueEventListener() {
+                    databaseReference.child("users").child(userId).child("role").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             String role = dataSnapshot.getValue(String.class);
@@ -65,5 +68,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
                 }
         };
+        firebaseAuth.addAuthStateListener(authStateListener);
     }
 }
