@@ -82,6 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
                                             } else{
                                                 Toast.makeText(LoginActivity.this, "Maaf anda sudah tidak terdaftar lagi sebagai pegawai Cafe TETI", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                                finish();
+//                                                firebaseAuth.signOut();
                                             }
                                             progressDialog.dismiss();
                                         }

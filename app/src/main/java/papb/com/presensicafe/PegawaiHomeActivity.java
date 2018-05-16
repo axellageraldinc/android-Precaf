@@ -100,6 +100,30 @@ public class PegawaiHomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkApakahPegawaiMasihAktif();
+    }
+
+    private void checkApakahPegawaiMasihAktif(){
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String status = dataSnapshot.getValue(String.class);
+                if(status.equals("nonaktif")){
+                    Toast.makeText(PegawaiHomeActivity.this, "Anda sudah tidak lagi terdaftar sebagai pegawai cafe teti", Toast.LENGTH_SHORT).show();
+                    firebaseAuth.signOut();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getTerhitungMulaiDari(){
         databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("tanggalRegistrasi").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -143,23 +167,25 @@ public class PegawaiHomeActivity extends AppCompatActivity {
     }
 
     private void getTotalDurasiJaga(){
-        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long jamJaga = dataSnapshot.getValue(Long.class);
-                txtTotalDurasiJaga.setText(String.format("%02d jam %02d menit %02d detik",
-                        TimeUnit.MILLISECONDS.toHours(jamJaga),
-                        TimeUnit.MILLISECONDS.toMinutes(jamJaga),
-                        TimeUnit.MILLISECONDS.toSeconds(jamJaga) -
-                                TimeUnit.MINUTES.toHours(TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MILLISECONDS.toSeconds(jamJaga)))
-                ));
-            }
+        if(firebaseAuth.getCurrentUser() != null) {
+            databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("jamJaga").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    long jamJaga = dataSnapshot.getValue(Long.class);
+                    txtTotalDurasiJaga.setText(String.format("%02d jam %02d menit %02d detik",
+                            TimeUnit.MILLISECONDS.toHours(jamJaga),
+                            TimeUnit.MILLISECONDS.toMinutes(jamJaga),
+                            TimeUnit.MILLISECONDS.toSeconds(jamJaga) -
+                                    TimeUnit.MINUTES.toHours(TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MILLISECONDS.toSeconds(jamJaga)))
+                    ));
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void connectGoogleApiClient(){
@@ -169,35 +195,51 @@ public class PegawaiHomeActivity extends AppCompatActivity {
         googleApiClient.connect();
     }
 
-    private void catatWaktuMulai(){if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(
-                PegawaiHomeActivity.this,
-                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                MY_PERMISSION_LOCATION
-        );
-    }
-        Awareness.SnapshotApi.getLocation(googleApiClient)
-                .setResultCallback(new ResultCallback<LocationResult>() {
-                    @Override
-                    public void onResult(@NonNull LocationResult locationResult) {
-                        if (!locationResult.getStatus().isSuccess()) {
-                            Log.e(TAG, "Could not get location.");
-                            return;
-                        }
-                        Location location = locationResult.getLocation();
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        Log.i(TAG, latitude + "," + longitude);
-                        double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, latitudeCafeTeti, longitudeCafeTeti);
-                        Log.i(TAG, "Jarak ke cafe teti : " + distanceToTetiCafe*1000 + " meter");
-                        if(distanceToTetiCafe < TOLERANSI_JARAK_DALAM_KILOMETER){
-                            TimeKeeper.timeStart=new Date().getTime();
-                            btnJaga.setText("SELESAI JAGA");
-                        } else{
-                            Toast.makeText(PegawaiHomeActivity.this, "Anda sedang tidak di TETI Cafe!", Toast.LENGTH_SHORT).show();
-                        }
+    private void catatWaktuMulai(){
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String status = dataSnapshot.getValue(String.class);
+                if(status.equals("nonaktif")){
+                    Toast.makeText(PegawaiHomeActivity.this, "Anda sudah tidak lagi terdaftar sebagai pegawai cafe teti", Toast.LENGTH_SHORT).show();
+                    firebaseAuth.signOut();
+                } else{
+                    if (ActivityCompat.checkSelfPermission(PegawaiHomeActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(
+                                PegawaiHomeActivity.this,
+                                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSION_LOCATION);
                     }
-                });
+                    Awareness.SnapshotApi.getLocation(googleApiClient)
+                            .setResultCallback(new ResultCallback<LocationResult>() {
+                                @Override
+                                public void onResult(@NonNull LocationResult locationResult) {
+                                    if (!locationResult.getStatus().isSuccess()) {
+                                        Log.e(TAG, "Could not get location.");
+                                        return;
+                                    }
+                                    Location location = locationResult.getLocation();
+                                    double latitude = location.getLatitude();
+                                    double longitude = location.getLongitude();
+                                    Log.i(TAG, latitude + "," + longitude);
+                                    double distanceToTetiCafe = CalculateDistance.calculate(latitude, longitude, latitudeCafeTeti, longitudeCafeTeti);
+                                    Log.i(TAG, "Jarak ke cafe teti : " + distanceToTetiCafe*1000 + " meter");
+                                    if(distanceToTetiCafe < TOLERANSI_JARAK_DALAM_KILOMETER){
+                                        TimeKeeper.timeStart=new Date().getTime();
+                                        btnJaga.setText("SELESAI JAGA");
+                                    } else{
+                                        Toast.makeText(PegawaiHomeActivity.this, "Anda sedang tidak di TETI Cafe!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     private void catatWaktuSelesai(){
         TimeKeeper.timeStop=new Date().getTime();
